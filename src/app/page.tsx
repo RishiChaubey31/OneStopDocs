@@ -1,102 +1,75 @@
+"use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { PenSquare, FileText, PanelLeft, Shapes, ArrowRight } from "lucide-react";
+import PrdEditor from "@/components/PrdEditor.client";
 
 export default function Home() {
+  const router = useRouter();
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="font-sans min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 flex flex-col">
+      {/* Hero Section */}
+      <header className="w-full py-16 flex flex-col items-center justify-center text-center gap-6">
+        <div className="flex items-center gap-3">
+          <Avatar>
+           
+           
+          </Avatar>
+          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
+            PRD Creator
+          </span>
         </div>
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight max-w-2xl bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
+          All-in-One Platform for PRDs, Design Docs, Flowcharts & UML Diagrams
+        </h1>
+        <p className="text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto text-lg sm:text-xl">
+          Effortlessly create, collaborate, and share product requirement documents, design docs, flowcharts, and UML diagrams—all in one place.
+        </p>
+        <Button size="lg" className="mt-4 px-8 py-6 text-lg font-semibold flex items-center gap-2" onClick={() => router.push("/editor")}>Create New Document</Button>
+      </header>
+
+      {/* Features Section */}
+      <main className="flex-1 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-12">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-col items-center">
+            <PenSquare className="size-10 text-primary mb-2" />
+            <CardTitle>PRD Editor</CardTitle>
+            <CardDescription>Rich, collaborative product requirement docs with versioning and comments.</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-col items-center">
+            <FileText className="size-10 text-primary mb-2" />
+            <CardTitle>Design Docs</CardTitle>
+            <CardDescription>Structure and document your designs with clarity and best practices.</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-col items-center">
+            <PanelLeft className="size-10 text-primary mb-2" />
+            <CardTitle>Flowcharts</CardTitle>
+            <CardDescription>Visualize processes and logic with an intuitive drag-and-drop flowchart builder.</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-col items-center">
+            <Shapes className="size-10 text-primary mb-2" />
+            <CardTitle>UML Diagrams</CardTitle>
+            <CardDescription>Create professional UML diagrams to model your systems and architecture.</CardDescription>
+          </CardHeader>
+        </Card>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Call to Action Footer */}
+      <footer className="w-full py-10 flex flex-col items-center gap-4 border-t border-zinc-200 dark:border-zinc-800 mt-8">
+        <span className="text-zinc-500 dark:text-zinc-400 text-sm">© {new Date().getFullYear()} PRD Creator. All rights reserved.</span>
+        <div className="flex gap-4">
+          <a href="#" className="text-zinc-600 hover:text-primary transition-colors">Privacy Policy</a>
+          <a href="#" className="text-zinc-600 hover:text-primary transition-colors">Terms of Service</a>
+        </div>
       </footer>
     </div>
   );
