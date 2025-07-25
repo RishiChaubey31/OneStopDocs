@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { MenuBar } from "@/components/PrdEditor.client";
 
 export default function EditorPage() {
   const router = useRouter();
   const editorRef = useRef<{ getHtml: () => string }>(null);
   const [saveType, setSaveType] = useState<"pdf" | "docx">("pdf");
+  const [editorInstance, setEditorInstance] = useState<any>(null);
 
   const handleSave = async () => {
     if (!editorRef.current) return;
@@ -69,10 +71,12 @@ export default function EditorPage() {
           <Button variant="default" size="sm" onClick={handleSave}><Save className="size-4 mr-1" />Save</Button>
         </div>
       </header>
+      {/* Toolbar (MenuBar) just below navbar */}
+      <MenuBar editor={editorInstance} />
       {/* Editor Area */}
       <main className="flex-1 flex flex-col items-center py-8 px-2 overflow-auto bg-violet-200">
         <div className="w-full max-w-3xl bg-yellow-100 dark:bg-zinc-900 rounded-lg shadow p-0 sm:p-4 border border-zinc-200 dark:border-zinc-800">
-          <PrdEditor ref={editorRef} />
+          <PrdEditor ref={editorRef} onEditorReady={setEditorInstance} />
         </div>
       </main>
     </div>
