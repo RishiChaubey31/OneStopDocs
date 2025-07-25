@@ -70,8 +70,8 @@ export default function EditorPage() {
         </div>
       </header>
       {/* Editor Area */}
-      <main className="flex-1 flex flex-col items-center py-8 px-2 overflow-auto">
-        <div className="w-full max-w-3xl bg-[#FFFDE7] dark:bg-zinc-900 rounded-lg shadow p-0 sm:p-4 border border-zinc-200 dark:border-zinc-800">
+      <main className="flex-1 flex flex-col items-center py-8 px-2 overflow-auto bg-violet-200">
+        <div className="w-full max-w-3xl bg-yellow-100 dark:bg-zinc-900 rounded-lg shadow p-0 sm:p-4 border border-zinc-200 dark:border-zinc-800">
           <PrdEditor ref={editorRef} />
         </div>
       </main>
