@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { MenuBar } from "@/components/PrdEditor.client";
+import { Toolbar } from "@/components/Toolbar";
+import { Editor } from "@tiptap/react";
+
 
 export default function EditorPage() {
   const router = useRouter();
   const editorRef = useRef<{ getHtml: () => string }>(null);
   const [saveType, setSaveType] = useState<"pdf" | "docx">("pdf");
-  const [editorInstance, setEditorInstance] = useState<any>(null);
+  const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
 
   const handleSave = async () => {
     if (!editorRef.current) return;
@@ -51,31 +53,33 @@ export default function EditorPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
+    return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* App Bar */}
-      <header className="w-full flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
+      <header className="w-full flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={() => router.push("/")}> <ArrowLeft className="size-5" /> </Button>
           <input
-            className="text-xl font-bold bg-transparent outline-none border-none px-2 py-1 rounded focus:bg-zinc-100 dark:focus:bg-zinc-900 transition-colors"
+            className="text-xl font-bold bg-transparent outline-none border-none px-2 py-1 rounded focus:bg-slate-100 dark:focus:bg-slate-800 transition-colors"
             defaultValue="Untitled Document"
             style={{ minWidth: 200 }}
           />
         </div>
         <div className="flex gap-2 items-center">
-          <select value={saveType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSaveType(e.target.value as "pdf" | "docx")} className="border rounded px-2 py-1 text-sm">
+          <select value={saveType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSaveType(e.target.value as "pdf" | "docx")} className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm bg-white dark:bg-slate-800">
             <option value="pdf">PDF</option>
             <option value="docx">Word (.docx)</option>
           </select>
-          <Button variant="default" size="sm" onClick={handleSave}><Save className="size-4 mr-1" />Save</Button>
+          <Button variant="default" size="sm" onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"><Save className="size-4 mr-1" />Save</Button>
         </div>
       </header>
-      {/* Toolbar (MenuBar) just below navbar */}
-      <MenuBar editor={editorInstance} />
+      {/* Sticky Toolbar below navbar */}
+      <div className="sticky top-[64px] z-40 flex justify-center w-full py-2">
+        <Toolbar editor={editorInstance} />
+      </div>
       {/* Editor Area */}
-      <main className="flex-1 flex flex-col items-center py-8 px-2 overflow-auto bg-violet-200">
-        <div className="w-full max-w-3xl bg-yellow-100 dark:bg-zinc-900 rounded-lg shadow p-0 sm:p-4 border border-zinc-200 dark:border-zinc-800">
+      <main className="flex-1 flex flex-col items-center py-8 px-2 overflow-auto relative">
+        <div className="relative z-10 w-full max-w-4xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-6">
           <PrdEditor ref={editorRef} onEditorReady={setEditorInstance} />
         </div>
       </main>
