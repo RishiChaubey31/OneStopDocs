@@ -18,6 +18,7 @@ import FontSize from "@tiptap/extension-font-size";
 import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
 
 import { Toolbar } from "./Toolbar";
 
@@ -172,12 +173,30 @@ const PrdEditor = forwardRef<{ getHtml: () => string }, PrdEditorProps>(function
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Underline,
       Highlight,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'link',
+        },
+        protocols: ['http', 'https', 'mailto', 'tel'],
+      }),
       DraggableImage,
     ],
     content: description,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       setDescription(editor.getHTML());
+    },
+    editorProps: {
+      handleKeyDown: (view, event) => {
+        // Ctrl+K or Cmd+K to open link dialog
+        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+          event.preventDefault();
+          // This will be handled by the toolbar component
+          return true;
+        }
+        return false;
+      },
     },
   });
 
@@ -297,6 +316,16 @@ const PrdEditor = forwardRef<{ getHtml: () => string }, PrdEditorProps>(function
     color: #000;
     padding: 0.1em 0.2em;
     border-radius: 0.2em;
+  }
+  
+  .tiptap-page .link {
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .tiptap-page .link:hover {
+    color: #1d4ed8;
   }
   
   .image-container {

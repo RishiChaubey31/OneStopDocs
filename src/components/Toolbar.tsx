@@ -14,6 +14,7 @@ import {
   AlignCenter,
   AlignRight,
   Image as ImageIcon,
+  Link as LinkIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,6 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { LinkDialog } from "./LinkDialog";
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -29,10 +31,15 @@ interface ToolbarProps {
 export const Toolbar = ({ editor }: ToolbarProps) => {
   const [color, setColor] = React.useState("#000000");
   const [bgColor, setBgColor] = React.useState("#ffffff");
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = React.useState(false);
+  const [linkDialogData, setLinkDialogData] = React.useState({ url: "", text: "" });
   const [fontFamilies, setFontFamilies] = React.useState([
     { label: "Default", value: "" },
   ]);
   const [loadingFonts, setLoadingFonts] = React.useState(true);
+  const [currentFont, setCurrentFont] = React.useState("");
+  const [currentFontSize, setCurrentFontSize] = React.useState("");
+  const [currentHeading, setCurrentHeading] = React.useState("Normal");
   const fontSizes = [
     { label: "12", value: "12px" },
     { label: "14", value: "14px" },
@@ -81,6 +88,90 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
     fetchFonts();
   }, []);
 
+  // Update current values when editor changes
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateCurrentValues = () => {
+      // Update heading
+      const newHeading = editor.isActive("heading", { level: 1 })
+        ? "Title"
+        : editor.isActive("heading", { level: 2 })
+        ? "Heading 1"
+        : editor.isActive("heading", { level: 3 })
+        ? "Heading 2"
+        : editor.isActive("heading", { level: 4 })
+        ? "Heading 3"
+        : "Normal";
+      setCurrentHeading(newHeading);
+
+      // Update font family
+      const attributes = editor.getAttributes('textStyle');
+      const newFont = attributes.fontFamily || "";
+      setCurrentFont(newFont);
+
+      // Update font size
+      const newFontSize = attributes.fontSize || "";
+      setCurrentFontSize(newFontSize);
+    };
+
+    // Update immediately
+    updateCurrentValues();
+
+    // Listen for editor updates
+    const handleUpdate = () => {
+      updateCurrentValues();
+    };
+
+    editor.on('update', handleUpdate);
+    editor.on('selectionUpdate', handleUpdate);
+
+    return () => {
+      editor.off('update', handleUpdate);
+      editor.off('selectionUpdate', handleUpdate);
+    };
+  }, [editor]);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        handleLinkClick();
+      }
+      // Text alignment shortcuts
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey) {
+        switch (event.key.toLowerCase()) {
+          case 'l':
+            event.preventDefault();
+            editor?.chain().focus().setTextAlign("left").run();
+            break;
+          case 'e':
+            event.preventDefault();
+            editor?.chain().focus().setTextAlign("center").run();
+            break;
+          case 'r':
+            event.preventDefault();
+            editor?.chain().focus().setTextAlign("right").run();
+            break;
+        }
+      }
+      
+      // Heading shortcuts (Ctrl+1-4)
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey) {
+        const key = event.key;
+        if (key >= '1' && key <= '4') {
+          event.preventDefault();
+          const level = parseInt(key) as 1 | 2 | 3 | 4;
+          editor?.chain().focus().toggleHeading({ level }).run();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [editor]);
+
   function loadGoogleFont(fontName: string) {
     if (!fontName) return;
     const fontUrl = `https://fonts.googleapis.com/css?family=${fontName.replace(
@@ -99,33 +190,65 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
     }
   }
 
+  const handleLinkClick = () => {
+    if (editor) {
+      const { from, to } = editor.state.selection;
+      const text = editor.state.doc.textBetween(from, to);
+      const linkAttributes = editor.getAttributes('link');
+      
+      // If we're on a link, get the link text
+      let linkText = text;
+      if (editor.isActive('link')) {
+        const linkMark = editor.state.schema.marks.link;
+        const linkRange = editor.state.selection.$from.marks().find(mark => mark.type === linkMark);
+        if (linkRange) {
+          // Get the text within the link mark
+          const linkFrom = editor.state.selection.from;
+          const linkTo = editor.state.selection.to;
+          linkText = editor.state.doc.textBetween(linkFrom, linkTo);
+        }
+      }
+      
+      setLinkDialogData({
+        url: linkAttributes.href || "",
+        text: linkText || ""
+      });
+      setIsLinkDialogOpen(true);
+    }
+  };
+
+  const handleLinkSave = (url: string, text: string) => {
+    if (!editor) return;
+
+    if (!url.trim()) {
+      // Remove link
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to);
+
+    if (editor.isActive('link')) {
+      // Update existing link
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    } else if (text.trim() && !selectedText.trim()) {
+      // Insert new text with link
+      editor.chain().focus().insertContent(`<a href="${url}">${text}</a>`).run();
+    } else if (selectedText.trim()) {
+      // Apply link to selected text
+      editor.chain().focus().setLink({ href: url }).run();
+    } else {
+      // No selection and no text provided, insert a placeholder link
+      editor.chain().focus().insertContent(`<a href="${url}">${url}</a>`).run();
+    }
+  };
+
 
 
   if (!editor) {
     return null;
   }
-
-  // Dropdown for heading/paragraph selection
-  const currentHeading = editor.isActive("heading", { level: 1 })
-    ? "Title"
-    : editor.isActive("heading", { level: 2 })
-    ? "Heading 1"
-    : editor.isActive("heading", { level: 3 })
-    ? "Heading 2"
-    : editor.isActive("heading", { level: 4 })
-    ? "Heading 3"
-    : "Normal";
-
-  // Get current font family from selection
-  const currentFont =
-    fontFamilies.find((f) =>
-      editor.isActive("textStyle", { fontFamily: f.value })
-    )?.value || "";
-
-  // Get current font size from selection
-  const currentFontSize =
-    fontSizes.find((f) => editor.isActive("textStyle", { fontSize: f.value }))
-      ?.value || "";
 
   return (
     <div className="bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 rounded-xl shadow-lg backdrop-blur-sm w-fit">
@@ -137,7 +260,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             editor.isActive({ textAlign: "left" }) ? "secondary" : "ghost"
           }
           size="icon"
-          title="Align Left"
+          title="Align Left (Ctrl+Shift+L)"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
         >
           <AlignLeft className="size-4" />
@@ -148,7 +271,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             editor.isActive({ textAlign: "center" }) ? "secondary" : "ghost"
           }
           size="icon"
-          title="Align Center"
+          title="Align Center (Ctrl+Shift+E)"
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
         >
           <AlignCenter className="size-4" />
@@ -159,7 +282,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             editor.isActive({ textAlign: "right" }) ? "secondary" : "ghost"
           }
           size="icon"
-          title="Align Right"
+          title="Align Right (Ctrl+Shift+R)"
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
         >
           <AlignRight className="size-4" />
@@ -171,10 +294,11 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
                          <button
                className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[80px] text-left bg-white dark:bg-slate-800"
                type="button"
+               title="Font Size"
              >
-              {currentFontSize
-                ? fontSizes.find((f) => f.value === currentFontSize)?.label
-                : "Size"}
+                             {currentFontSize
+                 ? fontSizes.find((f) => f.value === currentFontSize)?.label || currentFontSize.replace('px', '')
+                 : "16"}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="min-w-[80px]">
@@ -202,11 +326,13 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
                          <button
                className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[180px] text-left bg-white dark:bg-slate-800"
                type="button"
+               title="Font Family"
              >
               {loadingFonts
                 ? "Loading fonts..."
-                : fontFamilies.find((f) => f.value === currentFont)?.label ||
-                  "Default"}
+                : currentFont
+                ? fontFamilies.find((f) => f.value === currentFont)?.label || currentFont
+                : "Arial"}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="max-h-64 overflow-auto min-w-[180px]">
@@ -235,7 +361,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
                          <button
                className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[110px] text-left bg-white dark:bg-slate-800"
                type="button"
-               title="Heading Level"
+               title="Heading Level (Ctrl+1-4)"
              >
               {currentHeading}
             </button>
@@ -282,6 +408,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant={editor.isActive("bold") ? "secondary" : "ghost"}
           size="icon"
+          title="Bold (Ctrl+B)"
           onClick={() => editor.chain().focus().toggleBold().run()}
         >
           <Bold className="size-4" />
@@ -290,6 +417,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant={editor.isActive("italic") ? "secondary" : "ghost"}
           size="icon"
+          title="Italic (Ctrl+I)"
           onClick={() => editor.chain().focus().toggleItalic().run()}
         >
           <Italic className="size-4" />
@@ -298,6 +426,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant={editor.isActive("underline") ? "secondary" : "ghost"}
           size="icon"
+          title="Underline (Ctrl+U)"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
         >
           <UnderlineIcon className="size-4" />
@@ -306,6 +435,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant={editor.isActive("strike") ? "secondary" : "ghost"}
           size="icon"
+          title="Strikethrough"
           onClick={() => editor.chain().focus().toggleStrike().run()}
         >
           <Strikethrough className="size-4" />
@@ -314,6 +444,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant={editor.isActive("highlight") ? "secondary" : "ghost"}
           size="icon"
+          title="Highlight"
           onClick={() => editor.chain().focus().toggleHighlight().run()}
         >
           <Highlighter className="size-4" />
@@ -324,6 +455,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant="ghost"
           size="icon"
+          title="Undo (Ctrl+Z)"
           onClick={() => editor.chain().focus().undo().run()}
         >
           <Undo2 className="size-4" />
@@ -332,6 +464,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant="ghost"
           size="icon"
+          title="Redo (Ctrl+Y)"
           onClick={() => editor.chain().focus().redo().run()}
         >
           <Redo2 className="size-4" />
@@ -342,6 +475,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           type="button"
           variant="ghost"
           size="icon"
+          title="Insert Image"
           onClick={() => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -365,6 +499,17 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           <ImageIcon className="size-4" />
         </Button>
 
+        {/* Link Button */}
+        <Button
+          type="button"
+          variant={editor.isActive("link") ? "secondary" : "ghost"}
+          size="icon"
+          onClick={handleLinkClick}
+          title="Insert Link (Ctrl+K)"
+        >
+          <LinkIcon className="size-4" />
+        </Button>
+
         {/* Color Pickers */}
         <input
           type="color"
@@ -373,7 +518,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             setColor(e.target.value);
             editor.commands.setColor(e.target.value);
           }}
-          title="Text color"
+          title="Text Color"
           className="w-8 h-8 p-0 border rounded cursor-pointer"
           style={{ background: "none" }}
         />
@@ -384,11 +529,19 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             setBgColor(e.target.value);
             editor.chain().focus().setBackgroundColor(e.target.value).run();
           }}
-          title="Text background"
+          title="Background Color"
           className="w-8 h-8 p-0 border rounded cursor-pointer"
           style={{ background: "none" }}
         />
       </div>
+      
+      <LinkDialog
+        isOpen={isLinkDialogOpen}
+        onClose={() => setIsLinkDialogOpen(false)}
+        onSave={handleLinkSave}
+        initialUrl={linkDialogData.url}
+        initialText={linkDialogData.text}
+      />
     </div>
   );
 }; 

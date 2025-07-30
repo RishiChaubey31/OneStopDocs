@@ -1,4 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PRD Creator
+
+A powerful Product Requirements Document (PRD) editor built with Next.js and TipTap.
+
+## Features
+
+### Rich Text Editing
+- **Text Formatting**: Bold, italic, underline, strikethrough, and highlight
+- **Headings**: Multiple heading levels (Title, H1, H2, H3)
+- **Text Alignment**: Left, center, and right alignment
+- **Font Customization**: Font family and size selection
+- **Color Options**: Text color and background color
+- **Links**: Insert and edit links with a user-friendly dialog
+  - Click the link button or use `Ctrl+K` (or `Cmd+K` on Mac) to insert/edit links
+  - Support for HTTP, HTTPS, mailto, and tel protocols
+  - Automatic URL validation
+  - Edit existing links by clicking on them and using the link button
+
+### Media Support
+- **Images**: Drag and drop images or use the image button
+- **Resizable Images**: Click and drag the resize handle to resize images
+
+### User Experience
+- **Keyboard Shortcuts**: 
+  - `Ctrl+B` / `Cmd+B`: Bold
+  - `Ctrl+I` / `Cmd+I`: Italic
+  - `Ctrl+U` / `Cmd+U`: Underline
+  - `Ctrl+Z` / `Cmd+Z`: Undo
+  - `Ctrl+Y` / `Cmd+Y`: Redo
+  - `Ctrl+K` / `Cmd+K`: Insert/edit link
+  - `Ctrl+Shift+L`: Align left
+  - `Ctrl+Shift+E`: Align center
+  - `Ctrl+Shift+R`: Align right
+  - `Ctrl+1-4` / `Cmd+1-4`: Heading levels 1-4
+- **Drag and Drop**: Drop images directly onto the editor
+- **Real-time Preview**: See your changes as you type
+- **Tooltips**: Hover over toolbar buttons to see functionality and shortcuts
 
 ## Getting Started
 

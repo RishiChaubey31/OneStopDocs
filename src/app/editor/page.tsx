@@ -54,7 +54,7 @@ export default function EditorPage() {
   };
 
     return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-100 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900">
       {/* App Bar */}
       <header className="w-full flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm">
         <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default function EditorPage() {
         </div>
       </header>
       {/* Sticky Toolbar below navbar */}
-      <div className="sticky top-[64px] z-40 flex justify-center w-full py-2">
+      <div className="sticky top-[2px] z-40 flex justify-center w-full py-2">
         <Toolbar editor={editorInstance} />
       </div>
       {/* Editor Area */}
