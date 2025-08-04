@@ -124,11 +124,20 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
               <Button 
                 size="lg" 
-               
+                className="cursor-pointer"
                 onClick={() => router.push("/editor")}
               >
                 <Rocket className="w-5 h-5 mr-2" />
-                Start Creating Free
+                Start Creating Docs
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <Button 
+                size="lg" 
+                className="cursor-pointer"
+                onClick={() => router.push("/whiteboard")}
+              >
+                <Rocket className="w-5 h-5 mr-2" />
+                Start Creating Doodles
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
              

@@ -250,9 +250,10 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
     return null;
   }
 
-  return (
-    <div className="bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 rounded-xl shadow-lg backdrop-blur-sm w-fit">
-      <div className="flex flex-wrap gap-2 p-3 justify-center">
+    return (
+    <div className="bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 rounded-xl shadow-lg backdrop-blur-sm w-fit group relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-l from-blue-200 via-yellow-200 to-violet-200 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out"></div>
+      <div className="relative z-10 flex flex-wrap gap-2 p-3 justify-center">
         {/* Text Alignment Buttons */}
         <Button
           type="button"
@@ -262,6 +263,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Align Left (Ctrl+Shift+L)"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
+          className="cursor-pointer"
         >
           <AlignLeft className="size-4" />
         </Button>
@@ -273,6 +275,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Align Center (Ctrl+Shift+E)"
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
+          className="cursor-pointer"
         >
           <AlignCenter className="size-4" />
         </Button>
@@ -284,6 +287,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Align Right (Ctrl+Shift+R)"
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
+          className="cursor-pointer"
         >
           <AlignRight className="size-4" />
         </Button>
@@ -292,7 +296,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
                          <button
-               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[80px] text-left bg-white dark:bg-slate-800"
+               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[80px] text-left bg-white dark:bg-slate-800 cursor-pointer"
                type="button"
                title="Font Size"
              >
@@ -324,7 +328,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
                          <button
-               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[180px] text-left bg-white dark:bg-slate-800"
+               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[180px] text-left bg-white dark:bg-slate-800 cursor-pointer"
                type="button"
                title="Font Family"
              >
@@ -359,7 +363,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
                          <button
-               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[110px] text-left bg-white dark:bg-slate-800"
+               className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-sm font-medium min-w-[110px] text-left bg-white dark:bg-slate-800 cursor-pointer"
                type="button"
                title="Heading Level (Ctrl+1-4)"
              >
@@ -410,6 +414,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Bold (Ctrl+B)"
           onClick={() => editor.chain().focus().toggleBold().run()}
+          className="cursor-pointer"
         >
           <Bold className="size-4" />
         </Button>
@@ -419,6 +424,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Italic (Ctrl+I)"
           onClick={() => editor.chain().focus().toggleItalic().run()}
+          className="cursor-pointer"
         >
           <Italic className="size-4" />
         </Button>
@@ -428,6 +434,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Underline (Ctrl+U)"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className="cursor-pointer"
         >
           <UnderlineIcon className="size-4" />
         </Button>
@@ -437,6 +444,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Strikethrough"
           onClick={() => editor.chain().focus().toggleStrike().run()}
+          className="cursor-pointer"
         >
           <Strikethrough className="size-4" />
         </Button>
@@ -446,6 +454,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Highlight"
           onClick={() => editor.chain().focus().toggleHighlight().run()}
+          className="cursor-pointer"
         >
           <Highlighter className="size-4" />
         </Button>
@@ -457,6 +466,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Undo (Ctrl+Z)"
           onClick={() => editor.chain().focus().undo().run()}
+          className="cursor-pointer"
         >
           <Undo2 className="size-4" />
         </Button>
@@ -466,6 +476,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           title="Redo (Ctrl+Y)"
           onClick={() => editor.chain().focus().redo().run()}
+          className="cursor-pointer"
         >
           <Redo2 className="size-4" />
         </Button>
@@ -495,6 +506,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             };
             input.click();
           }}
+          className="cursor-pointer"
         >
           <ImageIcon className="size-4" />
         </Button>
@@ -506,6 +518,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
           size="icon"
           onClick={handleLinkClick}
           title="Insert Link (Ctrl+K)"
+          className="cursor-pointer"
         >
           <LinkIcon className="size-4" />
         </Button>
