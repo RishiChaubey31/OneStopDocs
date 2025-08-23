@@ -1,8 +1,9 @@
 import React from 'react'
+import { Whiteboard } from '../../../modules/whiteboard'
 
 function WhiteboardPage() {
   return (
-    <div>page</div>
+    <Whiteboard />
   )
 }
 
