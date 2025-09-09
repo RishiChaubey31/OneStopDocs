@@ -1,9 +1,9 @@
 import React from 'react'
-import { Whiteboard } from '../../../modules/whiteboard'
+import Excalidraw from '../../../modules/whiteboard'
 
 function WhiteboardPage() {
   return (
-    <Whiteboard />
+    <Excalidraw />
   )
 }
 
